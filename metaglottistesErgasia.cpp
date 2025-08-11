@@ -101,7 +101,7 @@ struct Parser
             n->kids.push_back(m);
             return n;
         }
-        // ε (κενό)
+        // ε (κενή συμβολοσειρά)
         n->kids.push_back(new Node("ε"));
         return n;
     }
@@ -128,30 +128,32 @@ int main()
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    string input;
-    if (!std::getline(cin, input))
-        return 0;
-
-    Parser p(input);
-    Node *tree = p.G();
-
-    // Έλεγχος: πρέπει να έχουμε καταναλώσει όλο το input
-    if (p.ok)
+    auto run = [&](const string &input)
     {
-        char rest = p.peek();
-        if (rest != '\0')
-            p.ok = false; // παραπάνω χαρακτήρες
-    }
+        Parser p(input);
+        Node *tree = p.G();
+        if (p.ok && p.peek() == '\0')
+        {
 
-    if (p.ok)
+            cout << "OK: Συντακτικά ορθή συμβολοσειρά.\n\n";
+            cout << "Δέντρο ανάλυσης:\n";
+            p.print(tree);
+        }
+        else
+        {
+            cout << "ΣΦΑΛΜΑ: Μη συντακτικά ορθή συμβολοσειρά.\n";
+        }
+    };
+
+    string input = "((a-b)*(a+b))";
+    cout << "Επίδειξη για την έκφραση " << input << "\n\n";
+    run(input);
+
+    cout << "Δώστε συμβολοσειρά για νέο έλεγχο: \n";
+    string line;
+    if (std::getline(cin, line))
     {
-        cout << "OK: Συντακτικά ορθή συμβολοσειρά.\n\n";
-        cout << "Δέντρο ανάλυσης:\n";
-        p.print(tree);
-    }
-    else
-    {
-        cout << "ΣΦΑΛΜΑ: Μη συντακτικά ορθή συμβολοσειρά.\n";
+        run(line);
     }
     return 0;
 }
